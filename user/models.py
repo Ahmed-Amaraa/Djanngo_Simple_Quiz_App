@@ -8,10 +8,5 @@ class User(models.Model):
     totalScore = models.IntegerField()
     is_admin = models.BooleanField()
 
-    def start_quiz(self, quiz):
-        # Logic to start a quiz
-        pass
-
-    def submit_response(self, response):
-        # Logic to submit a response
-        pass
+    def __str__(self):
+        return self.name

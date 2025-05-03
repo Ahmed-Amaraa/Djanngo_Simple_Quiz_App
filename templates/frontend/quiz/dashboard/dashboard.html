@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <script src="{% static 'js/dashboard.js' %}"></script>
 </head>
 <body>
   <header>
@@ -21,9 +23,21 @@
   </header>
 
   <main>
-    <div class="quiz-grid" id="quiz-container">
+    {% for quiz in quizes %}
+    <div class="quiz-grid" id="quiz-container" class="quiz-card">
       <!-- Quiz cards will be dynamically inserted here -->
+      <h2 class="quiz-title"><strong>{{ quiz.title }}</h2></strong><br>
+      <p class="quiz-description">{{ quiz.description }}</p>
+      <br>
+      <p class="quiz-difficulty" class=" 
+      {% if quiz.difficulty == 'easy' %}difficulty-easy
+      {% elif quiz.difficulty == 'medium' %}difficulty-medium
+      {% elif quiz.difficulty == 'hard' %}difficulty-hard
+      {% endif %}">{{ quiz.difficulty }}</p>
+      <br>
+      <button class="start-button">Start Quiz</button>
     </div>
+    {% endfor %}
   </main>
 
   <script src="dashboard.js"></script>
