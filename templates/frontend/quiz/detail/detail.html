@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Detail</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/detail.css' %}">
-  <script src="{% static 'js/detail.js' %}"></script>
-</head>
-<body>
+{% extends 'frontend/navbar.html' %}
+{% load static %}
+
+{% block title %}Quiz Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
+{% endblock %}
+  {% block content %}
   <header>
     <a href="dashboard.html" class="back-button">← Back to Quizzes</a>
     <h1 id="quiz-title">Quiz Title</h1>
@@ -74,6 +72,9 @@
     </section>
   </main>
 
-  <script src="detail.js"></script>
-</body>
-</html>
+  
+  {% endblock %}
+  {% block extra_js %}
+    <script src="{% static 'js/detail.js' %}"></script>
+  {% endblock %}
+

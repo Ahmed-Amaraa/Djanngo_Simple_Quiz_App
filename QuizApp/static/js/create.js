@@ -86,18 +86,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function publishQuiz(e) {
       e.preventDefault();
+    
       const quizData = collectQuizData();
-      
-      // Validate form
+    
       if (!validateQuiz(quizData)) {
         return;
       }
-      
-      console.log('Quiz published:', quizData);
-      alert('Quiz published successfully!');
-      // In a real app, send to backend and redirect
-      // window.location.href = 'dashboard.html';
+    
+      fetch('/api/create-quiz/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(quizData)
+      })
+      .then(async response => {
+        const data = await response.json();
+    
+        if (response.ok) {
+          alert(data.message || 'Quiz created successfully!');
+          window.location.href = '/dashboard/';
+        } else {
+          alert('Server Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Network Error:', error);
+        alert('An unexpected error occurred.');
+      });
     }
+    
     
     function collectQuizData() {
       const quizData = {
@@ -179,3 +198,19 @@ document.addEventListener('DOMContentLoaded', function() {
       return true;
     }
   });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  

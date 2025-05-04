@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz - Question</title>
-  <link rel="stylesheet" href="take_quiz.css">
-</head>
-<body>
+{% extends 'frontend/navbar.html' %}
+{% load static %}
+
+{% block title %}Quiz Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/take_quiz.css' %}">
+{% endblock %}
+
+  {% block content %}
   <header>
     <div class="quiz-header">
       <h1 id="quiz-title">Quiz Name</h1>
@@ -37,6 +38,8 @@
     </form>
   </main>
 
-  <script src="take_quiz.js"></script>
-</body>
-</html>
+  
+  {% endblock %}
+  {% block extra_js %}
+    <script src="{% static 'js/take_quiz.js' %}"></script>
+  {% endblock %}

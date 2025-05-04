@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Dashboard</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-  <script src="{% static 'js/dashboard.js' %}"></script>
-</head>
-<body>
+{% extends 'frontend/navbar.html' %}
+{% load static %}
+
+{% block title %}Quiz Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+  {% block content %}
   <header>
     <h1>MindSprint</h1>
     <div class="controls">
@@ -40,6 +38,7 @@
   </main>
   
 
-  <script src="dashboard.js"></script>
-</body>
-</html>
+  {% endblock %}
+  {% block extra_js %}
+    <script src="{% static 'js/dashboard.js' %}"></script>
+  {% endblock %}
