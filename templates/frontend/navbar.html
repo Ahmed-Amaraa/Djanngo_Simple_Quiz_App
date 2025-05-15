@@ -14,9 +14,9 @@
         <div id="sidebar" class="sidebar">
           <button id="toggle-btn" class="toggle-btn">☰</button>
           <ul id="sidebar-content" class="sidebar-content">
-            <li>Quizzes</li>
-            <li><a href="{% url 'create-quiz' %} " style="text-decoration: none; color: inherit;">Create Quiz</a></li>
-            <li>Help</li>
+            <a href="{% url 'quizes' %} " style="text-decoration: none; color: inherit;"><li>Quizzes</li></a>
+            <a href="{% url 'create-quiz' %} " style="text-decoration: none; color: inherit;"><li>Create Quiz</li></a>
+            <a href="{% url 'detail' %} " style="text-decoration: none; color: inherit;"><li>Help</li></a>
             <li class="logout">Logout</li>
           </ul>
         </div>

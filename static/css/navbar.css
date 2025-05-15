@@ -15,8 +15,26 @@ body, html {
     color: white;
     height: 100vh;
     padding-top: 10px;
-    position: relative;
+    position: fixed; /* Change from relative to fixed */
+    top: 0; /* Add top position */
+    left: 0; /* Add left position */
     transition: width 0.3s ease;
+    overflow-y: auto; /* Add scrolling for sidebar content if needed */
+  }
+  
+  .container {
+    display: flex;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 200px; /* Add margin equal to sidebar width */
+  }
+  
+  /* Adjust main content when sidebar is collapsed */
+  .sidebar.collapsed + .main-content {
+    margin-left: 60px;
   }
   
   .toggle-btn {

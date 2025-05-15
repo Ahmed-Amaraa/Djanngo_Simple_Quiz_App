@@ -80,15 +80,15 @@
 
   <!-- Choice Template (Hidden) -->
   <template id="choice-template">
-    <div class="choice-item">
-      <input type="radio" name="correct-answer" class="correct-answer-radio">
-      <input type="text" class="choice-text" placeholder="Enter choice text" required>
-      <button type="button" class="remove-choice-btn">×</button>
-    </div>
+      <div class="choice-item">
+        <input type="radio" class="correct-answer-radio">  <!-- Removed fixed name attribute -->
+        <input type="text" class="choice-text" placeholder="Enter choice text" required>
+        <button type="button" class="remove-choice-btn">×</button>
+      </div>
   </template>
 
   {% endblock %}
   {% block extra_js %}
-    <script src="{% static 'css/create.css' %}"></script>
+    <script src="{% static 'js/create.js' %}"></script>  
   {% endblock %}
   

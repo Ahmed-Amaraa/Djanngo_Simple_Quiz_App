@@ -41,7 +41,7 @@ def login_view(request):
             messages.error(request, 'Invalid credentials')
             return redirect('login')
 
-    return render(request, 'user/login.html')
+    return render(request, 'frontend/auth/login/login.html')
 
 @login_required
 def logout_view(request):

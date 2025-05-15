@@ -1,48 +1,57 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from . import models
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.utils import timezone
 import json
 from .models import Quiz, Question, Choice
 
 def createQuiz(request):
-    return render(request, 'frontend/quiz/create_quiz/create.html')
+    return render(request, 'frontend/quiz/create_quiz/create.html', {})
 
 @csrf_exempt
 def create_quiz_view(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-
-            # Create Quiz
-            quiz = Quiz.objects.create(
-                title=data['title'],
-                description=data.get('description', ''),
-                difficulty=data['difficulty'],
-                created_at=timezone.now()
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+    try:
+        data = json.loads(request.body)
+        
+        # Create the quiz
+        quiz = Quiz.objects.create(
+            title=data['title'],
+            description=data['description'],
+            difficulty=data['difficulty'],
+            image=data.get('imageUrl', '')  # Optional field
+        )
+        
+        # Create questions and choices
+        for question_data in data['questions']:
+            question = Question.objects.create(
+                quiz=quiz,
+                text=question_data['text']
             )
-
-            # Add Questions and Choices
-            for q in data['questions']:
-                question = Question.objects.create(
-                    quiz=quiz,
-                    text=q['text']
+            
+            # Create choices for each question
+            for choice_data in question_data['choices']:
+                Choice.objects.create(
+                    question=question,
+                    text=choice_data['text'],
+                    is_correct=choice_data['isCorrect']
                 )
+        
+        return JsonResponse({
+            'message': 'Quiz created successfully',
+            'quiz_id': quiz.id,
+            'redirect_url': '/'
+        }, status=201)
+        
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing required field: {str(e)}'}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
-                for c in q['choices']:
-                    Choice.objects.create(
-                        question=question,
-                        text=c['text'],
-                        is_correct=c['isCorrect']
-                    )
-
-            return JsonResponse({'message': 'Quiz created successfully'}, status=201)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Create your views here.
 

@@ -8,8 +8,8 @@
 {% endblock %}
   {% block content %}
   <header>
-    <a href="dashboard.html" class="back-button">← Back to Quizzes</a>
-    <h1 id="quiz-title">Quiz Title</h1>
+    <a href="{% url 'quizes' %}" class="back-button" style="text-decoration: none; color: inherit;">← Back to Quizzes</a>
+    <h1 id="quiz-title">Details</h1>
   </header>
 
   <main class="quiz-detail-container">
