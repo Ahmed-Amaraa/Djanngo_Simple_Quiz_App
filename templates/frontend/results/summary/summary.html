@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz Results</title>
-  <link rel="stylesheet" href="summary.css">
-</head>
-<body>
+{% extends 'frontend/navbar.html' %}
+{% load static %}
+
+{% block title %}Quiz Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/summary.css' %}">
+{% endblock %}
+{% block content %}
   <header>
     <h1>Quiz Results</h1>
-    <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
+    <a href="{% url 'quizes' %}" class="back-button">← Back to Dashboard</a>
   </header>
 
   <main class="result-container">
@@ -17,23 +17,23 @@
       <div class="score-circle">
         <svg class="progress-ring" width="200" height="200">
           <circle class="progress-ring-circle" stroke="#e0e0e0" stroke-width="12" fill="transparent" r="80" cx="100" cy="100"/>
-          <circle class="progress-ring-circle progress-ring-progress" stroke="#4caf50" stroke-width="12" stroke-dasharray="502.4" stroke-dashoffset="251.2" fill="transparent" r="80" cx="100" cy="100"/>
+          <circle class="progress-ring-circle progress-ring-progress" stroke="#4caf50" stroke-width="12" fill="transparent" r="80" cx="100" cy="100"/>
         </svg>
-        <div class="score-percentage">85%</div>
+        <div class="score-percentage">{{ score }}%</div>
       </div>
       <div class="score-details">
-        <h2>JavaScript Fundamentals</h2>
+        <h2>{{ quiz.title }}</h2>
         <div class="detail-item">
           <span class="detail-label">Correct Answers:</span>
-          <span class="detail-value correct">8/10</span>
+          <span class="detail-value correct">{{ correct }}/{{ total_questions }}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Time Taken:</span>
-          <span class="detail-value">4:32</span>
+          <span class="detail-value">{{ time_taken }}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Difficulty:</span>
-          <span class="detail-value difficulty-medium">Medium</span>
+          <span class="detail-value difficulty-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span>
         </div>
       </div>
     </section>
@@ -44,41 +44,48 @@
         <div class="breakdown-header">
           <span>Question</span>
           <span>Your Answer</span>
-          <span>Correct Answer</span>
           <span>Status</span>
         </div>
-        <div class="breakdown-item correct">
-          <span>1. Which keyword declares a variable?</span>
-          <span>let</span>
-          <span>let</span>
-          <span>✓ Correct</span>
+        {% for question in questions_data %}
+        <div class="breakdown-item {% if question.is_correct %}correct{% else %}incorrect{% endif %}">
+          <span>{{ question.text }}</span><br>
+          <span>{% if question.selected_choice %}{{ question.selected_choice.text }}{% else %}Not answered{% endif %}</span><br>
+          <span>{% if question.is_correct %}✓ Correct{% else %}✗ Incorrect{% endif %}</span><br>
         </div>
-        <div class="breakdown-item incorrect">
-          <span>2. What does === operator do?</span>
-          <span>Compares values</span>
-          <span>Compares value and type</span>
-          <span>✗ Incorrect</span>
-        </div>
-        <!-- More items would be dynamically added -->
+        {% endfor %}
       </div>
     </section>
 
     <section class="action-buttons">
       <button id="view-report-btn" class="action-button">View Detailed Report</button>
-      <button id="retry-quiz-btn" class="action-button secondary">Retry Quiz</button>
+      <a href="{% url 'take-quiz' quiz.id %}" style="text-decoration: none; color: inherit;"><button id="retry-quiz-btn" class="action-button secondary">Retry Quiz</button></a>
       <button id="share-result-btn" class="action-button">Share Result</button>
     </section>
 
     <section class="improvement-tips">
       <h2>Improvement Tips</h2>
       <div class="tip-card">
-        <h3>Variables and Scope</h3>
-        <p>You missed 2 questions about variable declarations. Remember:</p>
-        <ul>
-          <li><code>var</code> has function scope</li>
-          <li><code>let</code> and <code>const</code> have block scope</li>
-          <li><code>const</code> cannot be reassigned</li>
-        </ul>
+        <h3>{% if score >= 50 %}You win!!{% else %}Failed!!{% endif %}</h3>
+        <p>{% if correct == total_questions %}
+          Congratulations! You've answered all questions correctly.
+          {% elif score >= 50 %}
+          Good job! You passed, but there's room for improvement.
+          {% else %}
+          Keep practicing! Review the questions you missed to improve your score.
+          {% endif %}
+        </p>
+        {% if correct < total_questions %}
+        <div class="missed-questions">
+          <h4>Questions to Review:</h4>
+          <ul>
+            {% for question in questions_data %}
+              {% if not question.is_correct %}
+                <li>{{ question.text }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
       </div>
     </section>
   </main>
@@ -98,7 +105,8 @@
       </div>
     </div>
   </div>
+  {% endblock %}
+  {% block extra_js %}
+  <script src="{% static 'js/summary.js' %}"></script>
+  {% endblock %}
 
-  <script src="summary.js"></script>
-</body>
-</html>

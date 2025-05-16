@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from .models import Quiz, Question, Choice
+from .utils import calculate_score
 
 def createQuiz(request):
     return render(request, 'frontend/quiz/create_quiz/create.html', {})
@@ -62,24 +63,35 @@ def dashboard(request):
 def detail(request):
     return render(request, 'frontend/quiz/detail/detail.html', {})
 
+def delete_quiz(request, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
+    quiz.delete()
+    return redirect('quizes')
+    
+
+def takeQuiz(request, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
+    questions = Question.objects.filter(quiz=quiz)
+    questions_data = [{
+        'id': question.id,
+        'text': question.text,
+        'choices': [{
+            'id': choice.id,
+            'text': choice.text
+        } for choice in question.choices.all()]
+    } for question in questions]
+    
+    return render(request, 'frontend/quiz/take_quiz/take_quiz.html', {
+        'quiz': quiz,
+        'questions': json.dumps(questions_data)  # Serialize the data
+    })
 
 
-def takeQuiz(request):
-    pass
 
-# Quiz
-def add_question(self, question):
-    pass
 
-def remove_question(self, question):
-    pass
 
-def calculate_result(self):
-    pass
 
-# Question
-def add_choice(self, choice):
-    pass
 
-def remove_choice(self, choice):
-    pass
+
+
+    

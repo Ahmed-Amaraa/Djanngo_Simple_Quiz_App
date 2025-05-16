@@ -24,11 +24,6 @@ function filterQuizzes() {
   });
 }
 
-// Start Quiz Function
-function startQuiz(quizId) {
-  alert(`Starting quiz with ID: ${quizId}`);
-  // window.location.href = `/quiz.html?id=${quizId}`; // Uncomment to navigate
-}
 
 // Add Event Listeners
 searchInput.addEventListener('input', filterQuizzes);

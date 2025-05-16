@@ -1,45 +1,54 @@
 {% extends 'frontend/navbar.html' %}
 {% load static %}
 
-{% block title %}Quiz Dashboard{% endblock %}
+{% block title %}{{ quiz.title }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/take_quiz.css' %}">
 {% endblock %}
 
-  {% block content %}
-  <header>
-    <div class="quiz-header">
-      <h1 id="quiz-title">Quiz Name</h1>
-      <div class="quiz-meta">
-        <span class="timer" id="timer">00:30</span>
-        <span class="question-count" id="question-count">1/10</span>
+{% block content %}
+<header>
+  <div class="quiz-header">
+    <h1 id="quiz-title">{{ quiz.title }}</h1>
+    <div class="quiz-meta">
+      <span class="timer" id="timer">00:30</span>
+      <span class="question-count" id="question-count">1/{{ questions|length }}</span>
+    </div>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+</header>
+
+<main class="quiz-container">
+  <form id="quiz-form" method="POST" action="{% url 'result' %}">
+    {% csrf_token %}
+    <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+    <div class="question-container">
+      <h2 id="question-text"></h2>
+      <div class="options-container" id="options-container">
+        <!-- Options will be dynamically inserted here -->
       </div>
     </div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
+
+    <div class="navigation-buttons">
+      <button type="button" id="prev-btn" class="nav-button" disabled>Previous</button>
+      <button type="button" id="next-btn" class="nav-button">Next</button>
+      <button type="submit" id="submit-btn" class="nav-button submit-button" hidden>Submit Quiz</button>
     </div>
-  </header>
+  </form>
+</main>
+{% endblock %}
 
-  <main class="quiz-container">
-    <form id="quiz-form">
-      <div class="question-container">
-        <h2 id="question-text">Question text goes here?</h2>
-        <div class="options-container" id="options-container">
-          <!-- Options will be dynamically inserted here -->
-        </div>
-      </div>
-
-      <div class="navigation-buttons">
-        <button type="button" id="prev-btn" class="nav-button" disabled>Previous</button>
-        <button type="button" id="next-btn" class="nav-button">Next</button>
-        <button type="button" id="submit-btn" class="nav-button submit-button" hidden>Submit Quiz</button>
-      </div>
-    </form>
-  </main>
-
-  
-  {% endblock %}
-  {% block extra_js %}
-    <script src="{% static 'js/take_quiz.js' %}"></script>
-  {% endblock %}
+{% block extra_js %}
+<script>
+  // Pass quiz data to JavaScript
+  const quizData = {
+    id: {{ quiz.id }},
+    title: "{{ quiz.title|escapejs }}",
+    questions: JSON.parse('{{ questions|safe }}')
+  };
+</script>
+<script src="{% static 'js/take_quiz.js' %}"></script>
+{% endblock %}

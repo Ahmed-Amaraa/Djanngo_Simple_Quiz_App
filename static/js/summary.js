@@ -9,42 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareUrl = document.getElementById('share-url');
     const progressCircle = document.querySelector('.progress-ring-progress');
     
-    // Sample result data (in a real app, this would come from your backend)
-    const resultData = {
-      quizId: 123,
-      quizTitle: "JavaScript Fundamentals",
-      score: 85,
-      correctAnswers: 8,
-      totalQuestions: 10,
-      timeTaken: "4:32",
-      difficulty: "medium",
-      answers: [
-        {
-          question: "1. Which keyword declares a variable?",
-          userAnswer: "let",
-          correctAnswer: "let",
-          isCorrect: true
-        },
-        {
-          question: "2. What does === operator do?",
-          userAnswer: "Compares values",
-          correctAnswer: "Compares value and type",
-          isCorrect: false
-        },
-        // More answers would be here
-      ],
-      tips: [
-        {
-          title: "Variables and Scope",
-          content: "You missed 2 questions about variable declarations. Remember:",
-          points: [
-            "var has function scope",
-            "let and const have block scope",
-            "const cannot be reassigned"
-          ]
-        }
-      ]
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM Elements
+      const progressCircle = document.querySelector('.progress-ring-progress');
+      
+      // Get the actual score from the page
+      const score = parseFloat(document.querySelector('.score-percentage').textContent);
+      
+      // Calculate and set the progress ring
+      const circumference = 2 * Math.PI * 80;
+      const offset = circumference - (score / 100) * circumference;
+      progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+      progressCircle.style.strokeDashoffset = offset;
+  });
     
     // Initialize the page
     function initPage() {
@@ -103,12 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // window.location.href = `detailed_report.html?quiz_id=${resultData.quizId}`;
     });
     
-    retryQuizBtn.addEventListener('click', function() {
-      if (confirm('Retry this quiz?')) {
-        // window.location.href = `quiz.html?id=${resultData.quizId}`;
-        alert(`Redirecting to quiz: ${resultData.quizTitle}`);
-      }
-    });
+  
     
     shareResultBtn.addEventListener('click', function() {
       shareModal.style.display = 'flex';

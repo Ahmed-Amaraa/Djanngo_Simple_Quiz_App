@@ -53,7 +53,11 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.2s;
-    padding: 10px;
+    position: relative;
+  }
+
+  .quiz-card:hover .delete-quiz-btn {
+    display: block;
   }
   
   .quiz-card:hover {
@@ -138,3 +142,21 @@ body {
       width: 100%;
     }
   }
+
+  .delete-quiz-btn {
+    background-color: #f98686;
+    color: #511a1a;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none;
+    border: none;
+    font-size: 16px;
+  }
+
+  .delete-quiz-btn:hover {
+    background-color: #e7c8c8;
+  }
+  

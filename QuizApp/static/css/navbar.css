@@ -2,6 +2,7 @@
 body, html {
     margin: 0;
     padding: 0;
+    height: 100%;
     font-family: Arial, sans-serif;
   }
   
@@ -15,8 +16,11 @@ body, html {
     color: white;
     height: 100vh;
     padding-top: 10px;
-    position: relative;
     transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; 
   }
   
   .toggle-btn {
@@ -61,5 +65,6 @@ body, html {
   .main-content {
     flex-grow: 1;
     padding: 20px;
+    margin-left: 200px;
   }
   
