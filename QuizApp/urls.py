@@ -16,10 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import render
+from user import views
+
+
+def front_page(request):
+    return render(request, 'frontend/front.html')
 
 urlpatterns = [
+    path('', front_page, name='front'),
     path('admin/', admin.site.urls),
-    path('', include('quiz.urls')),
-    path('result', include('result.urls')),
-    path('user', include('user.urls')),
+    path('quiz/', include('quiz.urls')),
+    path('result/', include('result.urls')),
+    path('user/', include('user.urls')),
 ]

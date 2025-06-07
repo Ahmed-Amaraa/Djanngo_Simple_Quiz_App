@@ -43,12 +43,13 @@
 
 {% block extra_js %}
 <script>
-  // Pass quiz data to JavaScript
   const quizData = {
     id: {{ quiz.id }},
     title: "{{ quiz.title|escapejs }}",
-    questions: JSON.parse('{{ questions|safe }}')
+    questions: {{ questions|safe }}
   };
+  // Initialize the quiz when the page loads
+  document.addEventListener('DOMContentLoaded', initQuiz);
 </script>
 <script src="{% static 'js/take_quiz.js' %}"></script>
 {% endblock %}

@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% load static %}
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,49 +11,77 @@
   <div class="register-container">
     <div class="register-card">
       <div class="logo">
-        <img src="logo.png" alt="Quiz App Logo">
+        <img src="{% static 'image/logo.png' %}" alt="Quiz App Logo">
       </div>
       <h1>Create Your Account</h1>
       
-      <form id="register-form">
+      <form id="register-form" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
         <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" required autocomplete="name">
+          <label for="username">Full Name</label>
+          <input type="text" id="username" name="username" required autocomplete="username" value="{{ uf.username }}">
         </div>
         
         <div class="form-group">
           <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" required autocomplete="email">
+          <input type="email" id="email" name="email" required autocomplete="email" value="{{ uf.email }}">
         </div>
         
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" required autocomplete="new-password">
+          <input type="password" id="password" name="password" required autocomplete="new-password" value="{{ uf.password1 }}">
           <div class="password-toggle" id="toggle-password">👁️</div>
           <div class="password-strength" id="password-strength"></div>
         </div>
         
         <div class="form-group">
           <label for="confirm-password">Confirm Password</label>
-          <input type="password" id="confirm-password" name="confirm-password" required autocomplete="new-password">
+          <input type="password" id="confirm-password" name="confirm_password" required autocomplete="new-password" value="{{ uf.password2 }}">
           <div class="password-toggle" id="toggle-confirm-password">👁️</div>
           <div class="password-match" id="password-match"></div>
         </div>
         
-        <div class="form-options">
-          <label class="terms">
-            <input type="checkbox" name="terms" required>
-            <pre>I agree to the <a href="terms.html"><strong>of Service</strong></a> and <a href="privacy.html"><strong>Policy</strong></a></pre>
-          </label>
+        <div class="form-group">
+            <label for="category">User Category</label>
+            <select id="category" name="category" required>
+                <option value="" disabled {% if not uf.category %}selected{% endif %}>Select your category</option>
+                <option value="player" {% if uf.category == 'player' %}selected{% endif %}>Player</option>
+                <option value="creator" {% if uf.category == 'creator' %}selected{% endif %}>Creator</option>
+            </select>
         </div>
-        
-        <button type="submit" class="register-button">Create Account</button>
-        
-        <p class="login-link">Already have an account? <a href="login.html">Log in</a></p>
       </form>
+      <button type="submit" class="register-button">Register</button>
+      <p class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </div>
   </div>
 
   <script src="{% static 'js/register.js' %}"></script>
 </body>
-</html>
+</html>-->
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Quiz App</title>
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-card">
+      <div class="logo">
+        <img src="{% static 'image/logo.png' %}" alt="Quiz App Logo">
+      </div>
+      <h1>Create Your Account</h1>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+      </form>
+      <p class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </div>
+  </div>
+
+  <script src="{% static 'js/register.js' %}"></script>
+</body>

@@ -19,6 +19,11 @@ const TIME_PER_QUESTION = 30; // seconds
 
 // Initialize Quiz
 function initQuiz() {
+    console.log('Quiz Data:', quizData); // Debug log
+    if (!quizData || !quizData.questions) {
+        console.error('Invalid quiz data');
+        return;
+    }
     loadQuestion(currentQuestionIndex);
     startTimer();
     updateProgressBar();
@@ -27,7 +32,17 @@ function initQuiz() {
 
 // Load Question
 function loadQuestion(index) {
+    if (!quizData || !quizData.questions || quizData.questions.length === 0) {
+        console.error('No quiz data available');
+        return;
+    }
+
     const question = quizData.questions[index];
+    if (!question) {
+        console.error('Question not found at index:', index);
+        return;
+    }
+
     questionText.textContent = question.text;
     
     optionsContainer.innerHTML = '';
@@ -44,61 +59,34 @@ function loadQuestion(index) {
         input.value = choice.id;
         input.checked = userAnswers[question.id] === choice.id;
         
-        optionElement.appendChild(input);
-        optionElement.appendChild(document.createTextNode(choice.text));
-        
-        // Add this at the beginning with other DOM Elements
-        const quizForm = document.getElementById('quiz-form');
-        
-        // Add this function to handle form submission
-        quizForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Add time taken to the form
-            const timeInput = document.createElement('input');
-            timeInput.type = 'hidden';
-            timeInput.name = 'time_taken';
-            timeInput.value = document.getElementById('timer').textContent;
-            this.appendChild(timeInput);
-            
-            // Add all answers to the form
-            for (const questionId in userAnswers) {
-                const answerInput = document.createElement('input');
-                answerInput.type = 'hidden';
-                answerInput.name = `question_${questionId}`;
-                answerInput.value = userAnswers[questionId];
-                this.appendChild(answerInput);
-            }
-            
-            // Submit the form
-            this.submit();
-        });
-        
-        // Modify the option click event listener in loadQuestion function
-        optionElement.addEventListener('click', () => {
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            optionElement.classList.add('selected');
+        // Add event listener to radio button
+        input.addEventListener('change', () => {
             userAnswers[question.id] = choice.id;
-            
-            // Enable next/submit buttons
-            if (index < quizData.questions.length - 1) {
-                nextBtn.disabled = false;
-            } else {
-                submitBtn.hidden = false;
-                nextBtn.hidden = true;
-            }
+            updateButtonVisibility();
         });
         
+        const choiceText = document.createElement('span');
+        choiceText.textContent = choice.text;
+        
+        optionElement.appendChild(input);
+        optionElement.appendChild(choiceText);
         optionsContainer.appendChild(optionElement);
     });
     
-    // Update button states
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = !userAnswers[question.id];
-    nextBtn.hidden = index === quizData.questions.length - 1;
-    submitBtn.hidden = index !== quizData.questions.length - 1;
+    updateButtonVisibility();
+}
+
+// Add this new function to update button visibility
+function updateButtonVisibility() {
+    prevBtn.disabled = currentQuestionIndex === 0;
+    
+    if (currentQuestionIndex === quizData.questions.length - 1) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'inline-block';
+    } else {
+        nextBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'none';
+    }
 }
 
 // Navigation Functions
@@ -171,17 +159,20 @@ function updateQuestionCounter() {
 function submitQuiz() {
     clearInterval(timerInterval);
     
-    // Create form data
-    const formData = new FormData();
-    formData.append('quiz_id', quizData.id);
+    // Get the form
+    const form = document.getElementById('quiz-form');
     
-    // Add all answers
+    // Add all answers as hidden inputs to the form
     Object.entries(userAnswers).forEach(([questionId, choiceId]) => {
-        formData.append(`question_${questionId}`, choiceId);
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `question_${questionId}`;
+        input.value = choiceId;
+        form.appendChild(input);
     });
     
     // Submit the form
-    quizForm.submit();
+    form.submit();
 }
 
 // Event Listeners

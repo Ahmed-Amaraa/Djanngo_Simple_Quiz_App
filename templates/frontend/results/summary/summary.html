@@ -1,7 +1,7 @@
 {% extends 'frontend/navbar.html' %}
 {% load static %}
 
-{% block title %}Quiz Dashboard{% endblock %}
+{% block title %}Result{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/summary.css' %}">
@@ -40,19 +40,28 @@
 
     <section class="answer-breakdown">
       <h2>Answer Breakdown</h2>
-      <div class="breakdown-grid">
-        <div class="breakdown-header">
-          <span>Question</span>
-          <span>Your Answer</span>
-          <span>Status</span>
-        </div>
-        {% for question in questions_data %}
-        <div class="breakdown-item {% if question.is_correct %}correct{% else %}incorrect{% endif %}">
-          <span>{{ question.text }}</span><br>
-          <span>{% if question.selected_choice %}{{ question.selected_choice.text }}{% else %}Not answered{% endif %}</span><br>
-          <span>{% if question.is_correct %}✓ Correct{% else %}✗ Incorrect{% endif %}</span><br>
-        </div>
-        {% endfor %}
+      <div class="table-container">
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Question</th>
+              <th>Your Answer</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for question in questions_data %}
+            <tr class="{% if question.is_correct %}correct{% else %}incorrect{% endif %}">
+              <td>{{ question.text }}</td>
+              <td>{% if question.selected_choice %}{{ question.selected_choice.text }}{% else %}Not answered{% endif %}</td>
+              <td class="status-cell">
+                <span class="status-icon">{% if question.is_correct %}✓{% else %}✗{% endif %}</span>
+                <span class="status-text">{% if question.is_correct %}Correct{% else %}Incorrect{% endif %}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </section>
 

@@ -9,15 +9,13 @@ class Quiz(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(blank=True)
+    image = models.ImageField(upload_to='quiz_images/', blank=True)
     difficulty = models.CharField(max_length=10,
         choices=QUIZ_DIFFICULTY,
         default='easy',)
-
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes')
     def __str__(self):
         return self.title
-
-    
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
@@ -37,3 +35,4 @@ class UserQuizAttempt(models.Model):
     quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE)
     start_time = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)  # Add this line

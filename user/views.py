@@ -5,75 +5,114 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .models import User
+from .forms import UserForm, LoginForm
+from django.db.models import Avg
+import json
+
+
+
+def custom_session_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if 'user_id' not in request.session:
+            messages.error(request, 'You must be logged in to view this page.')
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])  # Hash the password
+            user.save()
+            return redirect('login')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserForm()
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already taken.')
-            return redirect('quizes')
-
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already registered.')
-            return redirect('quizes')
-
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.save()
-        login(request, user)
-        return redirect('profile')
-
-    return render(request, 'auth/register/register.html')
+    return render(request, 'frontend/auth/register/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                request.session['user_id'] = user.id
+                return redirect('quizes')
+            else:
+                messages.error(request, 'Invalid username or password')
+    else:
+        form = LoginForm()
 
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('quizes')
-        else:
-            messages.error(request, 'Invalid credentials')
-            return redirect('login')
-
-    return render(request, 'frontend/auth/login/login.html')
+    return render(request, 'frontend/auth/login/login.html', {'form': form})
 
 @login_required
 def logout_view(request):
-    logout(request)
+    if 'user_id' in request.session:
+        logout(request)
+        del request.session['user_id']
     return redirect('login')
 
 @login_required
 def profile(request):
-    user = request.user
-    history = UserQuizAttempt.objects.filter(user=user).select_related('quiz')
-
-    return render(request, 'results/history/history.html', {
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    user = User.objects.get(id=request.session['user_id'])
+    quiz_attempts = UserQuizAttempt.objects.filter(user=user)
+    
+    context = {
         'user': user,
-        'history': history
-    })
+        'quiz_count': quiz_attempts.count(),
+        'average_score': quiz_attempts.aggregate(Avg('score'))['score__avg'] if quiz_attempts.exists() else None,
+        'history': quiz_attempts.select_related('quiz').order_by('-start_time')
+    }
+    
+    return render(request, 'frontend/results/history/profile.html', context)
 
 
 @login_required
 def start_quiz(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id)
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
     user = request.user
-
-    attempt, created = UserQuizAttempt.objects.get_or_create(user=user, quiz=quiz)
+    quiz = get_object_or_404(Quiz, id=quiz_id)
     
-    if created:
-        # Quiz started for the first time
-        print("Quiz started at", attempt.start_time)
-    else:
-        # Already started before
-        print("Resuming quiz")
+    # Check if user is a player
+    if not user.can_create_quiz():
+        questions = Question.objects.filter(quiz=quiz)
+        questions_data = [{
+            'id': question.id,
+            'text': question.text,
+            'choices': [{
+                'id': choice.id,
+                'text': choice.text
+            } for choice in question.choices.all()]
+        } for question in questions]
 
-    return render(request, 'quiz/take_quiz/take_quiz.html', {'quiz': quiz, 'attempt': attempt})
+        attempt, created = UserQuizAttempt.objects.get_or_create(user=user, quiz=quiz)
+        
+        if created:
+            print("Quiz started at", attempt.start_time)
+        else:
+            print("Resuming quiz")
+
+        return render(request, 'frontend/quiz/take_quiz/take_quiz.html', {
+            'quiz': quiz,
+            'attempt': attempt,
+            'questions': json.dumps(questions_data)
+        })
+    else:
+        messages.error(request, 'Only players can take quizzes')
+        return redirect('quizes')
 
 
 @login_required

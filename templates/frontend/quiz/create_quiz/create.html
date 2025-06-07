@@ -17,6 +17,7 @@
 
   <main class="creation-container">
     <form id="quiz-form">
+      {% csrf_token %}
       <section class="quiz-info-section">
         <h2>Quiz Information</h2>
         <div class="form-group">

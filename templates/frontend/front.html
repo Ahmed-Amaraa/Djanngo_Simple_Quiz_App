@@ -1,0 +1,325 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Quiz App</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url({% static 'image/image.png' %});
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out;
+            z-index: 1000;
+        }
+
+        .container {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .navbar-brand span {
+            font-size: 1.5rem;
+            color: #1a73e8;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .container {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            animation: fadeIn 1s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-content h1 {
+            color: #1a73e8;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .hero-content p {
+            color: #5f6368;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            animation: fadeIn 1.4s ease-out;
+        }
+
+        .button {
+            padding: 0.8rem 2rem;
+            border: 2px solid;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .button:hover::after {
+            left: 100%;
+        }
+
+        .login {
+            color: #1a73e8;
+            border-color: #1a73e8;
+        }
+
+        .login:hover {
+            background-color: #1a73e8;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .signup {
+            color: #34a853;
+            border-color: #34a853;
+        }
+
+        .signup:hover {
+            background-color: #34a853;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+        }
+
+
+
+
+            @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            animation: fadeIn 1.6s ease-out;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite linear;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .feature-title {
+            color: #1a73e8;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-description {
+            color: #5f6368;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-5px) rotate(1deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="{% static 'image/logo.png' %}" alt="Quiz App Logo">
+            <span>Quiz App</span>
+        </div>
+        <div class="nav-buttons">
+            <a href="{% url 'login' %}" class="button login">Login</a>
+            <a href="{% url 'register' %}" class="button signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to Quiz App</h1>
+            <p>Challenge yourself with our interactive quizzes, track your progress, and compete with others. Join our community of learners and start your journey today!</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Learn Anything</h3>
+                    <p class="feature-description">Access a wide range of topics and subjects to expand your knowledge.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Compete & Win</h3>
+                    <p class="feature-description">Challenge others and climb the leaderboard rankings.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Track Progress</h3>
+                    <p class="feature-description">Monitor your improvement with detailed performance analytics.</p>
+                </div>
+            </div>
+
+            <div class="nav-buttons" style="margin-top: 2rem;">
+                <a href="{% url 'login' %}" class="button login">Get Started</a>
+                <a href="{% url 'register' %}" class="button signup">Create Account</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

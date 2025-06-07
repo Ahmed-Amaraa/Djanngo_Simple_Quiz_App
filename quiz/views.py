@@ -5,10 +5,13 @@ from django.http import JsonResponse
 import json
 from .models import Quiz, Question, Choice
 from .utils import calculate_score
+from django.contrib.auth.decorators import login_required
+
 
 def createQuiz(request):
     return render(request, 'frontend/quiz/create_quiz/create.html', {})
 
+@login_required
 @csrf_exempt
 def create_quiz_view(request):
     if request.method != 'POST':
@@ -17,12 +20,13 @@ def create_quiz_view(request):
     try:
         data = json.loads(request.body)
         
-        # Create the quiz
+        # Create the quiz with creator
         quiz = Quiz.objects.create(
             title=data['title'],
             description=data['description'],
             difficulty=data['difficulty'],
-            image=data.get('imageUrl', '')  # Optional field
+            image=data.get('imageUrl', ''),
+            creator=request.user  # Add this line
         )
         
         # Create questions and choices

@@ -97,25 +97,33 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
+    // Get CSRF token from cookie
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     // Send to backend
-    fetch('/api/create-quiz/', {
+    fetch('/quiz/api/create-quiz/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify(quizData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Failed to create quiz');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
-      if (data.message === 'Quiz created successfully') {
-        window.location.href = '/';  // Redirect to dashboard (root URL)
-      } else {
-        throw new Error('Failed to create quiz');
-      }
+        if (data.message === 'Quiz created successfully') {
+            window.location.href = data.redirect_url || '/quiz/';
+        }
     })
     .catch(error => {
-      console.error('Error:', error);
-      alert('Failed to create quiz: ' + error.message);
+        console.error('Error:', error);
+        alert('Failed to create quiz: ' + error.message);
     });
   }
   
