@@ -12,90 +12,100 @@ document.addEventListener('DOMContentLoaded', function() {
     const chartToggles = document.querySelectorAll('.chart-toggle');
     const categoryFilter = document.getElementById('filter-category');
     const timeFilter = document.getElementById('filter-time');
-  
-    // Sample user data (in a real app, this would come from your backend)
-    const userData = {
-      username: "JaneDoe42",
-      email: "jane.doe@example.com",
-      avatar: "https://via.placeholder.com/150",
-      joinDate: "January 2023",
-      quizCount: 24,
-      avgScore: 78,
-      performance: {
-        monthly: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-          data: [65, 72, 80, 78, 85, 82]
-        },
-        category: {
-          labels: ["JavaScript", "Python", "History", "Science", "Math"],
-          data: [82, 75, 68, 79, 85]
+    
+    let userData = {};
+    let performanceChart = null;
+
+    // Fetch user data from backend
+    async function fetchUserData() {
+        try {
+            const response = await fetch('/api/user/profile/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            userData = await response.json();
+            initPage();
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            document.querySelector('.profile-container').innerHTML = 
+                '<div class="error-message">Failed to load profile data. Please refresh the page or try again later.</div>';
         }
-      },
-      history: [
-        {
-          id: 101,
-          quizName: "Advanced JavaScript",
-          category: "javascript",
-          score: 85,
-          date: "2023-06-15",
-          difficulty: "hard"
-        },
-        {
-          id: 102,
-          quizName: "Python Basics",
-          category: "python",
-          score: 92,
-          date: "2023-06-10",
-          difficulty: "easy"
-        },
-        // More history items...
-      ],
-      recommendations: [
-        {
-          id: 201,
-          name: "JavaScript Design Patterns",
-          category: "javascript",
-          difficulty: "medium",
-          reason: "Based on your interest in advanced concepts"
-        },
-        {
-          id: 202,
-          name: "Modern Python Features",
-          category: "python",
-          difficulty: "medium",
-          reason: "To build on your strong Python basics"
-        },
-        // More recommendations...
-      ]
-    };
-  
-    // Chart instance
-    let performanceChart;
-  
+    }
+
+    // Get CSRF token from cookies
+    function getCsrfToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     // Initialize the page
     function initPage() {
-      // Set user info
-      document.getElementById('username').textContent = userData.username;
-      document.getElementById('join-date').textContent = userData.joinDate;
-      document.getElementById('quiz-count').textContent = userData.quizCount;
-      document.getElementById('avg-score').textContent = `${userData.avgScore}%`;
-      document.querySelector('.user-avatar').src = userData.avatar;
-  
-      // Initialize chart with monthly data
-      initChart('monthly');
-  
-      // Populate quiz history
-      renderHistory(userData.history);
-  
-      // Populate recommendations
-      renderRecommendations(userData.recommendations);
-  
-      // Set up form with current values
-      document.getElementById('edit-username').value = userData.username;
-      document.getElementById('edit-email').value = userData.email;
-      document.getElementById('edit-avatar').value = userData.avatar;
+        if (!userData || Object.keys(userData).length === 0) {
+            console.error('No user data available');
+            return;
+        }
+
+        // Set user info
+        document.getElementById('username').textContent = userData.username || 'N/A';
+        document.getElementById('join-date').textContent = userData.joinDate || 'N/A';
+        document.getElementById('quiz-count').textContent = userData.quizCount || '0';
+        document.getElementById('avg-score').textContent = userData.avgScore ? `${userData.avgScore}%` : 'N/A';
+        
+        const avatarElement = document.querySelector('.user-avatar');
+        if (avatarElement) {
+            avatarElement.src = userData.avatar || '/static/image/avatar.png';
+            avatarElement.onerror = function() {
+                this.src = '/static/image/avatar.png';
+            };
+        }
+
+        // Initialize chart if performance data exists
+        if (userData.performance && Object.keys(userData.performance).length > 0) {
+            initChart('monthly');
+        }
+
+        // Populate quiz history if exists
+        if (userData.history && userData.history.length > 0) {
+            renderHistory(userData.history);
+        } else {
+            historyList.innerHTML = '<div class="no-data">No quiz history available</div>';
+        }
+
+        // Populate recommendations if exists
+        if (userData.recommendations && userData.recommendations.length > 0) {
+            renderRecommendations(userData.recommendations);
+        } else {
+            recommendationsGrid.innerHTML = '<div class="no-data">No recommendations available</div>';
+        }
+
+        // Set up form with current values
+        if (editProfileForm) {
+            document.getElementById('edit-username').value = userData.username || '';
+            document.getElementById('edit-email').value = userData.email || '';
+        }
     }
-  
+
+    // Fetch data when page loads
+    fetchUserData();
+
     // Initialize performance chart
     function initChart(type) {
       if (performanceChart) {

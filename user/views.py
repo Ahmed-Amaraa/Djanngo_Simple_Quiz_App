@@ -65,11 +65,14 @@ def profile(request):
     if 'user_id' not in request.session:
         return redirect('login')
     
-    user = User.objects.get(id=request.session['user_id'])
+    user = request.user
+    print("Logged in user:", request.user.username)
+    print("Session user_id:", request.session.get('user_id'))
+
     quiz_attempts = UserQuizAttempt.objects.filter(user=user)
     
     context = {
-        'user': user,
+        'current_user': user,
         'quiz_count': quiz_attempts.count(),
         'average_score': quiz_attempts.aggregate(Avg('score'))['score__avg'] if quiz_attempts.exists() else None,
         'history': quiz_attempts.select_related('quiz').order_by('-start_time')

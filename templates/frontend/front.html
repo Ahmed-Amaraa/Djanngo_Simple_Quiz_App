@@ -202,10 +202,7 @@
 
         }
 
-
-
-
-            @keyframes shimmer {
+        @keyframes shimmer {
             0% { background-position: -1000px 0; }
             100% { background-position: 1000px 0; }
         }
@@ -278,6 +275,12 @@
                 transform: translateY(-5px) rotate(1deg);
             }
         }
+        .blur-background {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* for Safari */
+            background-color: rgba(255, 255, 255, 0.2); /* optional tint */
+        }
+
     </style>
 </head>
 <body>
@@ -291,12 +294,11 @@
             <a href="{% url 'register' %}" class="button signup">Sign Up</a>
         </div>
     </nav>
-
+    <div class="blur-background">
     <div class="container">
         <div class="hero-content">
             <h1>Welcome to Quiz App</h1>
             <p>Challenge yourself with our interactive quizzes, track your progress, and compete with others. Join our community of learners and start your journey today!</p>
-
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">📚</div>
@@ -314,12 +316,13 @@
                     <p class="feature-description">Monitor your improvement with detailed performance analytics.</p>
                 </div>
             </div>
-
             <div class="nav-buttons" style="margin-top: 2rem;">
                 <a href="{% url 'login' %}" class="button login">Get Started</a>
                 <a href="{% url 'register' %}" class="button signup">Create Account</a>
             </div>
         </div>
+        
+    </div>
     </div>
 </body>
 </html>
