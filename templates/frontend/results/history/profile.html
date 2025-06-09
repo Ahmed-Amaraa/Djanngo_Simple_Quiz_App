@@ -37,16 +37,7 @@
       </div>
     </section>
 
-    <section class="performance-section">
-      <h2>Your Performance</h2>
-      <div class="chart-container">
-        <canvas id="performance-chart"></canvas>
-      </div>
-      <div class="chart-toggles">
-        <button class="chart-toggle active" data-chart="monthly">Monthly</button>
-        <button class="chart-toggle" data-chart="category">By Category</button>
-      </div>
-    </section>
+    
 
     <section class="quiz-history-section">
       <h2>Recent Quiz Attempts</h2>
@@ -64,9 +55,25 @@
         </select>
       </div>
       <div class="history-list" id="history-list">
-        <!-- History items will be added here dynamically -->
+        {% if history %}
+          {% for attempt in history|slice:":2" %}
+            <div class="history-item">
+              <div class="quiz-info">
+                <h3>{{ attempt.quiz.title }}</h3>
+                <span class="quiz-date">{{ attempt.start_time|date:"F j, Y" }}</span>
+              </div>
+              <div class="quiz-stats">
+                <span class="score">Score: {{ attempt.score }}%</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="no-history">No quiz attempts yet</div>
+        {% endif %}
       </div>
-      <button id="load-more-btn" class="load-more-button">Load More</button>
+      {% if history|length > 2 %}
+        <button id="load-more-btn" class="load-more-button">Load More</button>
+      {% endif %}
     </section>
 
     <section class="recommendations-section">
@@ -104,6 +111,10 @@
       </form>
     </div>
   </div>
+  <!-- Add this before the endblock -->
+  <script id="quiz-history-data" type="application/json">
+    {{ history|json_script:"quiz-history-data" }}
+  </script>
   {% endblock %}
   {% block extra_js %}
   <script src="{% static 'js/profile.js' %}"></script>

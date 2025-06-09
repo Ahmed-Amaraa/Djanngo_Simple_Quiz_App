@@ -71,11 +71,24 @@ def profile(request):
 
     quiz_attempts = UserQuizAttempt.objects.filter(user=user)
     
+    # Convert quiz attempts to a list of dictionaries for JSON serialization
+    history_data = [
+        {
+            'id': attempt.id,
+            'quiz': {
+                'id': attempt.quiz.id,
+                'title': attempt.quiz.title
+            },
+            'score': attempt.score,
+            'start_time': attempt.start_time.strftime('%Y-%m-%d %H:%M:%S')
+        } for attempt in quiz_attempts.select_related('quiz').order_by('-start_time')
+    ]
+    
     context = {
         'current_user': user,
         'quiz_count': quiz_attempts.count(),
         'average_score': quiz_attempts.aggregate(Avg('score'))['score__avg'] if quiz_attempts.exists() else None,
-        'history': quiz_attempts.select_related('quiz').order_by('-start_time')
+        'history': history_data  # Use the serializable list instead of QuerySet
     }
     
     return render(request, 'frontend/results/history/profile.html', context)

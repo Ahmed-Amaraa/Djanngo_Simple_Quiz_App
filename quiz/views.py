@@ -47,7 +47,7 @@ def create_quiz_view(request):
         return JsonResponse({
             'message': 'Quiz created successfully',
             'quiz_id': quiz.id,
-            'redirect_url': '/'
+            'redirect_url': '/quiz'
         }, status=201)
         
     except KeyError as e:

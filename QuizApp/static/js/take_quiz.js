@@ -171,6 +171,13 @@ function submitQuiz() {
         form.appendChild(input);
     });
     
+    // Add time taken to the form
+    const timeTakenInput = document.createElement('input');
+    timeTakenInput.type = 'hidden';
+    timeTakenInput.name = 'time_taken';
+    timeTakenInput.value = timerElement.textContent;
+    form.appendChild(timeTakenInput);
+    
     // Submit the form
     form.submit();
 }

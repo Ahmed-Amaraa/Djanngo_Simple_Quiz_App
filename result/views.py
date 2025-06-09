@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from quiz.utils import calculate_score
+from quiz.models import UserQuizAttempt
 
 # Create your views here.
 
@@ -41,6 +42,18 @@ def result(request):
         
         score = calculate_score(correct, number_of_questions)
         time_taken = request.POST.get('time_taken', '0:00')  # Get time from form
+
+        # Replace the quiz attempt saving code with this
+        if request.user.is_authenticated:
+            quiz_attempt, created = UserQuizAttempt.objects.get_or_create(
+                user=request.user,
+                quiz=quiz,
+                completed=False,
+                defaults={'score': 0}
+            )
+            quiz_attempt.score = score
+            quiz_attempt.completed = True
+            quiz_attempt.save()
 
         return render(request, 'frontend/results/summary/summary.html', {
             'score': score,
