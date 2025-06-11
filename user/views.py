@@ -56,8 +56,8 @@ def login_view(request):
 @login_required
 def logout_view(request):
     if 'user_id' in request.session:
-        logout(request)
         del request.session['user_id']
+    logout(request)
     return redirect('login')
 
 @login_required
@@ -66,8 +66,7 @@ def profile(request):
         return redirect('login')
     
     user = request.user
-    print("Logged in user:", request.user.username)
-    print("Session user_id:", request.session.get('user_id'))
+    
 
     quiz_attempts = UserQuizAttempt.objects.filter(user=user)
     
@@ -85,7 +84,7 @@ def profile(request):
     ]
     
     context = {
-        'current_user': user,
+        'user': user,
         'quiz_count': quiz_attempts.count(),
         'average_score': quiz_attempts.aggregate(Avg('score'))['score__avg'] if quiz_attempts.exists() else None,
         'history': history_data  # Use the serializable list instead of QuerySet
@@ -124,7 +123,8 @@ def start_quiz(request, quiz_id):
         return render(request, 'frontend/quiz/take_quiz/take_quiz.html', {
             'quiz': quiz,
             'attempt': attempt,
-            'questions': json.dumps(questions_data)
+            'questions': json.dumps(questions_data),
+            'user': user,
         })
     else:
         messages.error(request, 'Only players can take quizzes')
@@ -144,3 +144,17 @@ def submit_response(request, response):
         )
 
         return redirect('next_question_or_results')
+
+
+import random
+
+@login_required
+def start_random_quiz(request):
+    quizzes = Quiz.objects.all()
+    if not quizzes.exists():
+        messages.warning(request, "No quizzes available.")
+        return redirect('quizes')  # Or wherever you want to redirect in case of no quiz
+
+    quiz = random.choice(quizzes)
+    return redirect('get-quiz', quiz_id=quiz.id)
+

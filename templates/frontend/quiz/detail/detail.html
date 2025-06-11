@@ -31,7 +31,10 @@
           <li>Points are awarded based on speed and accuracy</li>
         </ul>
       </div>
-      <button id="start-quiz-btn" class="start-button">Start Quiz</button>
+      <form action="{% url 'start_random_quiz' %}" method="get">
+        <button type="submit" id="start-quiz-btn" class="start-button">Start Quiz</button>
+      </form>
+    
     </section>
 
     <section class="quiz-stats">

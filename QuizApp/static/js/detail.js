@@ -1,8 +1,8 @@
 // Sample Quiz Data (In a real app, this would come from your backend)
 const quizData = {
     id: 1,
-    title: "Advanced JavaScript Concepts",
-    description: "Test your knowledge of modern JavaScript including ES6+ features, async/await, and design patterns. This quiz covers both theoretical concepts and practical coding challenges.",
+    title: "Try our Application",
+    description: "Test your knowledge. This quiz covers both theoretical and practical concepts challenges.",
     difficulty: "medium",
     questionCount: 10,
     image: "https://via.placeholder.com/800x400?text=Advanced+JavaScript",
@@ -47,7 +47,6 @@ const quizData = {
     // window.location.href = `/take_quiz.html?quiz_id=${quizId}`;
     
     // For demo purposes, show an alert
-    alert(`Starting quiz: ${quizData.title}`);
   }
   
   // Initialize the page when loaded

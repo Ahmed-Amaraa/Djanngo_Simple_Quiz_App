@@ -8,6 +8,7 @@ from .utils import calculate_score
 from django.contrib.auth.decorators import login_required
 
 
+
 def createQuiz(request):
     return render(request, 'frontend/quiz/create_quiz/create.html', {})
 
